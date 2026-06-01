@@ -48,9 +48,11 @@
             font-variant-numeric: tabular-nums;
         }
 
-        /* Estilo para los cascos flotantes */
+        /* Estilo corregido para los cascos flotantes */
         .floating-helmet {
-            position: absolute;
+            position: fixed; /* Cambiado a fixed para desacoplarlo del flujo y centrar el origen */
+            top: 0;          /* Forzamos el origen de coordenadas (0,0) */
+            left: 0;         /* al extremo superior izquierdo de la pantalla */
             will-change: transform;
             pointer-events: none;
             user-select: none;
@@ -85,8 +87,7 @@
     <!-- Canvas para la simulación estelar del fondo -->
     <canvas id="particle-canvas" class="absolute inset-0 w-full h-full -z-10 pointer-events-none"></canvas>
 
-    <!-- REPRODUCTOR NATIVO DE AUDIO HTML5: 
-         La URL directa de Veridis Quo nos permite saltarnos las restricciones asíncronas de iframes de YouTube/Spotify. -->
+    <!-- REPRODUCTOR NATIVO DE AUDIO HTML5 -->
     <audio id="bg-audio" loop preload="auto">
         <source src="https://instant-oza.com/wp-content/uploads/2023/10/Daft-Punk-Veridis-Quo-Official-Video.mp3" type="audio/mpeg">
     </audio>
@@ -340,7 +341,7 @@
 
             audio.addEventListener('timeupdate', () => {
                 const currentTime = audio.currentTime;
-                const duration = audio.duration || 345; // 5:45 (345s) duración estimada de la pista
+                const duration = audio.duration || 345; // 5:45 (345s) duración de la pista
                 
                 const percent = (currentTime / duration) * 100;
                 document.getElementById('custom-progress').style.width = `${percent}%`;
@@ -379,7 +380,7 @@
             audio.currentTime = audio.duration * clickPercent;
         }
 
-        // --- STREAMING_CHUNK: Setting up particles and background physics... ---
+        // --- SISTEMA DE PARTÍCULAS DE FONDO ---
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -450,7 +451,7 @@
             requestAnimationFrame(animateParticles);
         }
 
-        // --- STREAMING_CHUNK: Building Daft Punk helmet physics... ---
+        // --- SISTEMA DE MOVIMIENTO DE CASCOS (DAFT PUNK) ---
         class DaftHelmet {
             constructor(elementId, width) {
                 this.element = document.getElementById(elementId);
@@ -458,12 +459,15 @@
                 this.width = width;
                 this.height = width;
                 
+                // Ubicación inicial aleatoria en la pantalla
                 this.x = Math.random() * (window.innerWidth - this.width);
                 this.y = Math.random() * (window.innerHeight - this.height);
                 
+                // Velocidades de dirección
                 this.vx = (Math.random() * 1.5 + 0.5) * (Math.random() < 0.5 ? 1 : -1);
                 this.vy = (Math.random() * 1.5 + 0.5) * (Math.random() < 0.5 ? 1 : -1);
                 
+                // Rotaciones
                 this.rotation = Math.random() * 360;
                 this.vRot = (Math.random() * 0.2 + 0.05) * (Math.random() < 0.5 ? 1 : -1);
             }
@@ -474,6 +478,7 @@
                 this.y += this.vy;
                 this.rotation += this.vRot;
 
+                // Físicas de rebote perfectas contra el borde real de la pantalla (gracias a position: fixed)
                 if (this.x <= 0) {
                     this.x = 0;
                     this.vx *= -1;
@@ -557,7 +562,7 @@
             startProgressTracker();
         };
 
-        // --- STREAMING_CHUNK: Running real-time telemetry algorithms... ---
+        // --- ALGORITMOS DE TELEMETRÍA EN TIEMPO REAL ---
         function calculateAndRender() {
             const now = new Date();
             const currentYear = now.getFullYear();
