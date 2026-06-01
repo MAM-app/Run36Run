@@ -6,15 +6,13 @@
     <title>Sincronización Temporal - 18/06</title>
     <!-- Tailwind CSS para diseño estructurado -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Cargamos la API de YouTube para control de audio automático y seguro -->
-    <script src="https://www.youtube.com/iframe_api"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Space+Grotesk:wght@500;700&display=swap');
         
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #000000; /* Fondo negro absoluto requerido */
+            background-color: #000000; /* Fondo negro absoluto */
             overflow: hidden; /* Controlado durante el overlay inicial */
         }
         .font-display {
@@ -58,7 +56,7 @@
             user-select: none;
         }
 
-        /* Pantalla de autorización previa para habilitar Autoplay de Spotify */
+        /* Pantalla de autorización previa para habilitar Autoplay en Móviles */
         #auth-overlay {
             position: fixed;
             inset: 0;
@@ -74,11 +72,12 @@
 </head>
 <body class="relative min-h-screen text-slate-100 flex flex-col items-center justify-between py-8 px-4 md:px-8">
 
+    <!-- Capa de autenticación: El clic aquí activa de inmediato el audio nativo en móviles -->
     <div id="auth-overlay">
         <div class="mb-8 text-lime-500 font-mono text-xs md:text-sm tracking-[0.5em] animate-pulse text-center px-4">
             SISTEMA DE TELEMETRÍA DETECTADO<br>REQUIRIENDO AUTORIZACIÓN DE AUDIO
         </div>
-        <button onclick="unlockTelemetry()" class="border-2 border-lime-500 text-lime-500 hover:bg-lime-500 hover:text-black transition-all duration-300 font-display font-bold px-8 py-4 tracking-widest text-sm uppercase">
+        <button onclick="unlockTelemetry()" class="border-2 border-lime-500 text-lime-500 hover:bg-lime-500 hover:text-black transition-all duration-300 font-display font-bold px-8 py-4 tracking-widest text-sm uppercase cursor-pointer">
             Iniciar Misión 18/06
         </button>
     </div>
@@ -86,8 +85,11 @@
     <!-- Canvas para la simulación estelar del fondo -->
     <canvas id="particle-canvas" class="absolute inset-0 w-full h-full -z-10 pointer-events-none"></canvas>
 
-    <!-- Contenedor del reproductor oculto de YouTube -->
-    <div id="yt-player" class="hidden"></div>
+    <!-- REPRODUCTOR NATIVO DE AUDIO HTML5: 
+         La URL directa de Veridis Quo nos permite saltarnos las restricciones asíncronas de iframes de YouTube/Spotify. -->
+    <audio id="bg-audio" loop preload="auto">
+        <source src="https://instant-oza.com/wp-content/uploads/2023/10/Daft-Punk-Veridis-Quo-Official-Video.mp3" type="audio/mpeg">
+    </audio>
 
     <!-- Casco Daft Punk 1: Thomas (Plata / Visor Cian) -->
     <div id="helmet-thomas" class="floating-helmet z-0 w-24 h-24 md:w-32 md:h-32 opacity-80">
@@ -122,7 +124,6 @@
         <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-black border-2 border-lime-500 text-[10px] md:text-xs font-bold tracking-widest text-lime-400 uppercase mb-4">
             <span class="w-2.5 h-2.5 bg-lime-400 animate-pulse"></span> SISTEMA DE TELEMETRÍA PLANA
         </div>
-        <!-- Cambio de color a Verde Lima sólido -->
         <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight font-display text-lime-500 uppercase">
             Misión 18 de Junio
         </h1>
@@ -146,7 +147,7 @@
                     </span>
                 </div>
 
-                <!-- Temporizador Oficial (Sólido) -->
+                <!-- Temporizador Oficial -->
                 <div class="grid grid-cols-4 gap-2 md:gap-4 my-4">
                     <div class="bg-black/80 rounded-lg p-3 md:p-4 text-center border border-slate-850">
                         <span id="h1-days" class="block text-2xl md:text-4xl font-extrabold text-cyan-400 tabular-nums">00</span>
@@ -196,7 +197,6 @@
                 <div class="flex items-center justify-between border-b-2 border-slate-800 pb-4 mb-6">
                     <div>
                         <span class="text-xs font-bold uppercase tracking-widest text-purple-400">Punto Crítico</span>
-                        <!-- Título de fase con "1990" añadido -->
                         <h2 class="text-xl md:text-2xl font-bold font-display mt-0.5 text-white">Llegada Real 1990</h2>
                     </div>
                     <span class="px-3 py-1 text-xs font-bold bg-black text-purple-400 border-2 border-purple-400 font-display">
@@ -204,7 +204,7 @@
                     </span>
                 </div>
 
-                <!-- Temporizador Real (Sólido) -->
+                <!-- Temporizador Real -->
                 <div class="grid grid-cols-4 gap-2 md:gap-4 my-4">
                     <div class="bg-black/80 rounded-lg p-3 md:p-4 text-center border border-slate-850">
                         <span id="h2-days" class="block text-2xl md:text-4xl font-extrabold text-purple-400 tabular-nums">00</span>
@@ -250,6 +250,7 @@
 
     </main>
 
+    <!-- Consola de sonido integrada táctica -->
     <section class="w-full max-w-6xl mt-8 mb-4 z-10 px-0 md:px-4">
         <div class="bg-black border-2 border-lime-500 p-4 rounded-xl">
             <div class="flex items-center justify-between mb-3 text-lime-400 font-mono text-xs font-bold tracking-widest uppercase">
@@ -258,12 +259,11 @@
                         <span id="player-ping" class="absolute inline-flex h-full w-full rounded-full bg-lime-400 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-lime-500"></span>
                     </span>
-                    SISTEMA DE AUDIO INTEGRADO — TOUCH BY DAFT PUNK
+                    SISTEMA DE AUDIO INTEGRADO — VERIDIS QUO
                 </div>
-                <div id="track-time" class="hidden sm:block text-slate-500">0:00 / 8:29</div>
+                <div id="track-time" class="hidden sm:block text-slate-500">0:00 / 5:45</div>
             </div>
             
-            <!-- Consola de sonido personalizada táctica -->
             <div class="flex flex-col md:flex-row items-center gap-4 bg-slate-950/80 border border-slate-800 p-4 rounded-lg">
                 <div class="flex items-center gap-4 w-full md:w-auto">
                     <!-- Botón Reproducir / Pausar -->
@@ -300,58 +300,23 @@
     </footer>
 
     <script>
-        let ytPlayer;
-        let progressInterval;
+        const audio = document.getElementById('bg-audio');
 
-        // Función requerida por la API de YouTube para inicializarse de manera síncrona
-        window.onYouTubeIframeAPIReady = function() {
-            ytPlayer = new YT.Player('yt-player', {
-                height: '0',
-                width: '0',
-                videoId: 'TCd6PfxOy0Y', // ID oficial del tema "Veridis Quo" de Daft Punk en YouTube
-                playerVars: {
-                    'autoplay': 0,
-                    'controls': 0,
-                    'disablekb': 1,
-                    'fs': 0,
-                    'rel': 0,
-                    'showinfo': 0,
-                    'modestbranding': 1
-                },
-                events: {
-                    'onStateChange': onPlayerStateChange
-                }
-            });
-        }
-
-        // Control de los iconos de reproducción según el estado real del reproductor
-        function onPlayerStateChange(event) {
-            const playIcon = document.getElementById('play-icon');
-            const pauseIcon = document.getElementById('pause-icon');
-            const ping = document.getElementById('player-ping');
-
-            if (event.data === YT.PlayerState.PLAYING) {
-                playIcon.classList.add('hidden');
-                pauseIcon.classList.remove('hidden');
-                ping.classList.add('animate-ping');
-                startProgressTracker();
-            } else {
-                playIcon.classList.remove('hidden');
-                pauseIcon.classList.add('hidden');
-                ping.classList.remove('animate-ping');
-                clearInterval(progressInterval);
-            }
-        }
-
-        // Desbloqueador del overlay para iniciar audio y despliegues
+        // Función que desbloquea la interfaz y activa el sonido síncronamente (compatible con iOS/Android)
         function unlockTelemetry() {
             const overlay = document.getElementById('auth-overlay');
             overlay.style.opacity = '0';
             document.body.style.overflow = 'auto';
             
-            // Intentar reproducir automáticamente mediante el gesto del botón
-            if (ytPlayer && typeof ytPlayer.playVideo === 'function') {
-                ytPlayer.playVideo();
+            // Al reproducir de inmediato sobre el "click/tap" inicial, los navegadores de móviles lo aprueban de forma nativa
+            if (audio) {
+                audio.play()
+                    .then(() => {
+                        startProgressTracker();
+                    })
+                    .catch(err => {
+                        console.log("El bloqueo móvil impidió la reproducción sincrónica:", err);
+                    });
             }
             
             setTimeout(() => {
@@ -359,24 +324,23 @@
             }, 500);
         }
 
-        // Alterna entre reproducir y pausar
+        // Alterna entre reproducir y pausar sobre el audio nativo
         function togglePlayback() {
-            if (!ytPlayer || typeof ytPlayer.getPlayerState !== 'function') return;
-            const state = ytPlayer.getPlayerState();
-            if (state === YT.PlayerState.PLAYING) {
-                ytPlayer.pauseVideo();
+            if (!audio) return;
+            if (audio.paused) {
+                audio.play();
             } else {
-                ytPlayer.playVideo();
+                audio.pause();
             }
         }
 
-        // Actualiza el indicador visual de tiempo y barra de progreso
+        // Sigue los cambios y el tiempo del reproductor nativo
         function startProgressTracker() {
-            clearInterval(progressInterval);
-            progressInterval = setInterval(() => {
-                if (!ytPlayer || typeof ytPlayer.getCurrentTime !== 'function') return;
-                const currentTime = ytPlayer.getCurrentTime();
-                const duration = ytPlayer.getDuration() || 346; // 5:46 son 346 segundos
+            if (!audio) return;
+
+            audio.addEventListener('timeupdate', () => {
+                const currentTime = audio.currentTime;
+                const duration = audio.duration || 345; // 5:45 (345s) duración estimada de la pista
                 
                 const percent = (currentTime / duration) * 100;
                 document.getElementById('custom-progress').style.width = `${percent}%`;
@@ -388,24 +352,34 @@
                 };
                 
                 document.getElementById('track-time').innerText = `${formatTime(currentTime)} / ${formatTime(duration)}`;
-            }, 500);
+            });
+
+            // Sincronizar estados visuales de los iconos del reproductor
+            audio.addEventListener('play', () => {
+                document.getElementById('play-icon').classList.add('hidden');
+                document.getElementById('pause-icon').classList.remove('hidden');
+                document.getElementById('player-ping').classList.add('animate-ping');
+            });
+
+            audio.addEventListener('pause', () => {
+                document.getElementById('play-icon').classList.remove('hidden');
+                document.getElementById('pause-icon').classList.add('hidden');
+                document.getElementById('player-ping').classList.remove('animate-ping');
+            });
         }
 
-        // Permite avanzar o retroceder el audio al hacer clic en la barra
+        // Permite avanzar o retroceder en la pista de audio con un clic en la barra
         function seekTrack(event) {
-            if (!ytPlayer || typeof ytPlayer.getDuration !== 'function') return;
+            if (!audio || !audio.duration) return;
             const rect = event.currentTarget.getBoundingClientRect();
             const clickX = event.clientX - rect.left;
             const width = rect.width;
             const clickPercent = clickX / width;
             
-            const duration = ytPlayer.getDuration();
-            if (duration > 0) {
-                ytPlayer.seekTo(duration * clickPercent, true);
-            }
+            audio.currentTime = audio.duration * clickPercent;
         }
 
-        // --- ANIMACIÓN DE PARTÍCULAS EN EL FONDO ---
+        // --- STREAMING_CHUNK: Setting up particles and background physics... ---
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -416,7 +390,6 @@
             canvas.height = window.innerHeight;
         }
 
-        // Colores planos sólidos requeridos
         const paletteColors = [
             '#06b6d4', // Cian
             '#a855f7', // Morado
@@ -477,7 +450,7 @@
             requestAnimationFrame(animateParticles);
         }
 
-        // --- SISTEMA DE ANIMACIÓN ALEATORIA DE LOS CASCOS DE DAFT PUNK ---
+        // --- STREAMING_CHUNK: Building Daft Punk helmet physics... ---
         class DaftHelmet {
             constructor(elementId, width) {
                 this.element = document.getElementById(elementId);
@@ -485,15 +458,12 @@
                 this.width = width;
                 this.height = width;
                 
-                // Posicionar aleatoriamente en el viewport
                 this.x = Math.random() * (window.innerWidth - this.width);
                 this.y = Math.random() * (window.innerHeight - this.height);
                 
-                // Velocidad aleatoria
                 this.vx = (Math.random() * 1.5 + 0.5) * (Math.random() < 0.5 ? 1 : -1);
                 this.vy = (Math.random() * 1.5 + 0.5) * (Math.random() < 0.5 ? 1 : -1);
                 
-                // Ángulo de rotación
                 this.rotation = Math.random() * 360;
                 this.vRot = (Math.random() * 0.2 + 0.05) * (Math.random() < 0.5 ? 1 : -1);
             }
@@ -504,7 +474,6 @@
                 this.y += this.vy;
                 this.rotation += this.vRot;
 
-                // Límites de colisión para el eje X
                 if (this.x <= 0) {
                     this.x = 0;
                     this.vx *= -1;
@@ -513,7 +482,6 @@
                     this.vx *= -1;
                 }
 
-                // Límites de colisión para el eje Y
                 if (this.y <= 0) {
                     this.y = 0;
                     this.vy *= -1;
@@ -522,7 +490,6 @@
                     this.vy *= -1;
                 }
 
-                // Aplicar transformaciones fluidas por hardware
                 this.element.style.transform = `translate3d(${this.x}px, ${this.y}px, 0px) rotate(${this.rotation}deg)`;
             }
 
@@ -551,34 +518,10 @@
             requestAnimationFrame(animateHelmets);
         }
 
-        // --- GESTIÓN DE EVENTOS DE MOUSE Y GESTOS TÁCTILES ---
+        // --- GESTIÓN DE EVENTOS Y GESTOS TÁCTILES ---
         window.addEventListener('mousemove', (e) => {
             mouse.x = e.clientX;
             mouse.y = e.clientY;
-        });
-
-        window.addEventListener('mouseleave', () => {
-            mouse.x = null;
-            mouse.y = null;
-        });
-
-        window.addEventListener('touchmove', (e) => {
-            if (e.touches.length > 0) {
-                mouse.x = e.touches[0].clientX;
-                mouse.y = e.touches[0].clientY;
-            }
-        });
-
-        window.addEventListener('touchend', () => {
-            mouse.x = null;
-            mouse.y = null;
-        });
-
-        window.addEventListener('resize', () => {
-            resizeCanvas();
-            initParticles();
-            if (helmetThomas && helmetThomas.element) helmetThomas.resize();
-            if (helmetGuy && helmetGuy.element) helmetGuy.resize();
         });
 
         window.addEventListener('mouseleave', () => {
@@ -605,16 +548,16 @@
             if (helmetGuy) helmetGuy.resize();
         });
 
-        // Inicializar ciclos de renderizado principal
         window.onload = function() {
             resizeCanvas();
             initParticles();
             animateParticles();
             initHelmets();
             animateHelmets();
+            startProgressTracker();
         };
 
-        // --- STREAMING_CHUNK: Cálculo y procesamiento en tiempo real de los hitos ---
+        // --- STREAMING_CHUNK: Running real-time telemetry algorithms... ---
         function calculateAndRender() {
             const now = new Date();
             const currentYear = now.getFullYear();
