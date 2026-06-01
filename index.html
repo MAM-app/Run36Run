@@ -6,33 +6,42 @@
     <title>Sincronización Temporal - 18/06</title>
     <!-- Tailwind CSS para diseño estructurado -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Space+Grotesk:wght=500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Space+Grotesk:wght@500;700&display=swap');
         
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #000000; /* Negro absoluto */
-            overflow-x: hidden;
+            background-color: #000000; /* Fondo negro absoluto requerido */
+            overflow: hidden; /* Controlado durante el overlay inicial */
         }
         .font-display {
             font-family: 'Space Grotesk', sans-serif;
         }
         
-        /* Tarjetas con bordes sólidos gruesos y sin difuminados (Estilo Retro-Futurista Plano) */
-        .solid-card {
-            background-color: #0c0d12;
+        /* Fichas transparentes con bordes sólidos gruesos */
+        .glass-card {
+            background-color: rgba(12, 13, 18, 0.4); /* Transparencia nítida */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             border: 2px solid #1e293b;
             transition: transform 0.2s ease, border-color 0.2s ease;
         }
         
+        .solid-card-cyan {
+            border-color: #06b6d4; /* Borde cian sólido */
+        }
         .solid-card-cyan:hover {
-            border-color: #06b6d4; /* Cian sólido */
             transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.15);
         }
         
+        .solid-card-purple {
+            border-color: #a855f7; /* Borde morado sólido */
+        }
         .solid-card-purple:hover {
-            border-color: #a855f7; /* Morado sólido */
             transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.15);
         }
 
         .tabular-nums {
@@ -46,42 +55,57 @@
             pointer-events: none;
             user-select: none;
         }
+
+        /* Pantalla de autorización previa para habilitar Autoplay de Spotify */
+        #auth-overlay {
+            position: fixed;
+            inset: 0;
+            background: #000000;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease-out;
+        }
     </style>
 </head>
 <body class="relative min-h-screen text-slate-100 flex flex-col items-center justify-between py-8 px-4 md:px-8">
 
+    <div id="auth-overlay">
+        <div class="mb-8 text-lime-500 font-mono text-xs md:text-sm tracking-[0.5em] animate-pulse text-center px-4">
+            SISTEMA DE TELEMETRÍA DETECTADO<br>REQUIRIENDO AUTORIZACIÓN DE AUDIO
+        </div>
+        <button onclick="unlockTelemetry()" class="border-2 border-lime-500 text-lime-500 hover:bg-lime-500 hover:text-black transition-all duration-300 font-display font-bold px-8 py-4 tracking-widest text-sm uppercase">
+            Iniciar Misión 18/06
+        </button>
+    </div>
+
+    <!-- Canvas para la simulación estelar del fondo -->
     <canvas id="particle-canvas" class="absolute inset-0 w-full h-full -z-10 pointer-events-none"></canvas>
 
-    <!-- Casco Daft Punk 1: Thomas (Plateado / Cian) -->
+    <!-- Casco Daft Punk 1: Thomas (Plateado / Visor Cian) -->
     <div id="helmet-thomas" class="floating-helmet z-0 w-24 h-24 md:w-32 md:h-32 opacity-80">
         <svg viewBox="0 0 100 100" class="w-full h-full">
-            <!-- Estructura del Casco Thomas Bangalter -->
             <path d="M20,40 Q20,15 50,15 Q80,15 80,40 L80,70 Q80,85 50,85 Q20,85 20,70 Z" fill="#1e293b" stroke="#ffffff" stroke-width="3"/>
             <path d="M25,43 Q25,22 50,22 Q75,22 75,43 L75,68 Q75,80 50,80 Q25,80 25,68 Z" fill="#000000" stroke="#475569" stroke-width="1.5"/>
-            <!-- Orejeras -->
             <circle cx="16" cy="55" r="8" fill="#475569" stroke="#ffffff" stroke-width="2"/>
             <circle cx="84" cy="55" r="8" fill="#475569" stroke="#ffffff" stroke-width="2"/>
-            <!-- Visor Horizontal Cian -->
             <rect x="23" y="38" width="54" height="15" rx="2" fill="#000000" stroke="#06b6d4" stroke-width="2"/>
             <line x1="27" y1="45" x2="73" y2="45" stroke="#06b6d4" stroke-width="3"/>
             <line x1="27" y1="49" x2="73" y2="49" stroke="#06b6d4" stroke-width="1"/>
-            <!-- Detalles de Mentonera -->
             <rect x="42" y="68" width="16" height="4" fill="#000000" stroke="#475569" stroke-width="1.5"/>
         </svg>
     </div>
 
-    <!-- Casco Daft Punk 2: Guy-Manuel (Dorado / Morado / Verde) -->
+    <!-- Casco Daft Punk 2: Guy-Manuel (Dorado / Visor Morado) -->
     <div id="helmet-guy" class="floating-helmet z-0 w-24 h-24 md:w-32 md:h-32 opacity-80">
         <svg viewBox="0 0 100 100" class="w-full h-full">
-            <!-- Estructura del Casco Guy-Manuel de Homem-Christo -->
             <path d="M22,35 Q22,12 50,12 Q78,12 78,35 L78,65 Q78,85 50,85 Q22,85 22,65 Z" fill="#1e293b" stroke="#eab308" stroke-width="3"/>
             <path d="M26,38 Q26,18 50,18 Q74,18 74,38 L74,62 Q74,80 50,80 Q26,80 26,62 Z" fill="#000000" stroke="#78350f" stroke-width="1.5"/>
-            <!-- Orejeras con bandas -->
             <rect x="15" y="45" width="8" height="20" rx="2" fill="#000000" stroke="#eab308" stroke-width="2"/>
             <rect x="77" y="45" width="8" height="20" rx="2" fill="#000000" stroke="#eab308" stroke-width="2"/>
-            <!-- Visor Redondo Completo -->
             <path d="M30,32 Q50,25 70,32 L70,58 Q50,65 30,58 Z" fill="#000000" stroke="#a855f7" stroke-width="2.5"/>
-            <!-- Luces LED internas -->
             <rect x="36" y="38" width="5" height="15" fill="#a855f7"/>
             <rect x="44" y="36" width="4" height="20" fill="#84cc16"/>
             <rect x="52" y="36" width="4" height="20" fill="#06b6d4"/>
@@ -90,11 +114,12 @@
     </div>
 
     <header class="w-full max-w-6xl text-center mb-6 mt-4 md:mt-8 z-10">
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-none bg-black border-2 border-lime-500 text-[10px] md:text-xs font-bold tracking-widest text-lime-400 uppercase mb-4">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-black border-2 border-lime-500 text-[10px] md:text-xs font-bold tracking-widest text-lime-400 uppercase mb-4">
             <span class="w-2.5 h-2.5 bg-lime-400 animate-pulse"></span> SISTEMA DE TELEMETRÍA PLANA
         </div>
-        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight font-display text-white">
-            Misión <span class="text-cyan-400">18</span> de <span class="text-purple-400">Junio</span>
+        <!-- Cambio de color a Verde Lima sólido -->
+        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight font-display text-lime-500 uppercase">
+            Misión 18 de Junio
         </h1>
         <p class="text-slate-400 mt-2 text-sm md:text-base max-w-md mx-auto font-light">
             Monitoreo dual de alta precisión con simulación Daft Punk activa.
@@ -104,7 +129,7 @@
     <main class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch z-10 my-auto">
         
         <!-- HITO 1: CUMPLEAÑOS GENERAL (00:00) -->
-        <div class="solid-card solid-card-cyan rounded-2xl p-6 md:p-8 flex flex-col justify-between relative overflow-hidden group">
+        <div class="glass-card solid-card-cyan rounded-2xl p-6 md:p-8 flex flex-col justify-between relative overflow-hidden group">
             <div>
                 <div class="flex items-center justify-between border-b-2 border-slate-800 pb-4 mb-6">
                     <div>
@@ -118,19 +143,19 @@
 
                 <!-- Temporizador Oficial (Sólido) -->
                 <div class="grid grid-cols-4 gap-2 md:gap-4 my-4">
-                    <div class="bg-black rounded-lg p-3 md:p-4 text-center border border-slate-800">
+                    <div class="bg-black/80 rounded-lg p-3 md:p-4 text-center border border-slate-850">
                         <span id="h1-days" class="block text-2xl md:text-4xl font-extrabold text-cyan-400 tabular-nums">00</span>
                         <span class="text-[9px] md:text-xs uppercase tracking-wider text-slate-500 font-bold block mt-1">Días</span>
                     </div>
-                    <div class="bg-black rounded-lg p-3 md:p-4 text-center border border-slate-800">
+                    <div class="bg-black/80 rounded-lg p-3 md:p-4 text-center border border-slate-850">
                         <span id="h1-hours" class="block text-2xl md:text-4xl font-extrabold text-slate-100 tabular-nums">00</span>
                         <span class="text-[9px] md:text-xs uppercase tracking-wider text-slate-500 font-bold block mt-1">Horas</span>
                     </div>
-                    <div class="bg-black rounded-lg p-3 md:p-4 text-center border border-slate-800">
+                    <div class="bg-black/80 rounded-lg p-3 md:p-4 text-center border border-slate-850">
                         <span id="h1-minutes" class="block text-2xl md:text-4xl font-extrabold text-slate-100 tabular-nums">00</span>
                         <span class="text-[9px] md:text-xs uppercase tracking-wider text-slate-500 font-bold block mt-1">Mins</span>
                     </div>
-                    <div class="bg-black rounded-lg p-3 md:p-4 text-center border border-slate-800">
+                    <div class="bg-black/80 rounded-lg p-3 md:p-4 text-center border border-slate-850">
                         <span id="h1-seconds" class="block text-2xl md:text-4xl font-extrabold text-lime-400 tabular-nums">00</span>
                         <span class="text-[9px] md:text-xs uppercase tracking-wider text-slate-500 font-bold block mt-1">Segs</span>
                     </div>
@@ -160,13 +185,14 @@
             </div>
         </div>
 
-        <!-- HITO 2: MARCA DE LLEGADA REAL (14:55) -->
-        <div class="solid-card solid-card-purple rounded-2xl p-6 md:p-8 flex flex-col justify-between relative overflow-hidden group">
+        <!-- HITO 2: MARCA DE LLEGADA REAL 1990 (14:55) -->
+        <div class="glass-card solid-card-purple rounded-2xl p-6 md:p-8 flex flex-col justify-between relative overflow-hidden group">
             <div>
                 <div class="flex items-center justify-between border-b-2 border-slate-800 pb-4 mb-6">
                     <div>
                         <span class="text-xs font-bold uppercase tracking-widest text-purple-400">Punto Crítico</span>
-                        <h2 class="text-xl md:text-2xl font-bold font-display mt-0.5 text-white">Marca de Llegada Real</h2>
+                        <!-- Título de fase con "1990" añadido -->
+                        <h2 class="text-xl md:text-2xl font-bold font-display mt-0.5 text-white">Llegada Real 1990</h2>
                     </div>
                     <span class="px-3 py-1 text-xs font-bold bg-black text-purple-400 border-2 border-purple-400 font-display">
                         14:55 HS
@@ -175,19 +201,19 @@
 
                 <!-- Temporizador Real (Sólido) -->
                 <div class="grid grid-cols-4 gap-2 md:gap-4 my-4">
-                    <div class="bg-black rounded-lg p-3 md:p-4 text-center border border-slate-800">
+                    <div class="bg-black/80 rounded-lg p-3 md:p-4 text-center border border-slate-850">
                         <span id="h2-days" class="block text-2xl md:text-4xl font-extrabold text-purple-400 tabular-nums">00</span>
                         <span class="text-[9px] md:text-xs uppercase tracking-wider text-slate-500 font-bold block mt-1">Días</span>
                     </div>
-                    <div class="bg-black rounded-lg p-3 md:p-4 text-center border border-slate-800">
+                    <div class="bg-black/80 rounded-lg p-3 md:p-4 text-center border border-slate-850">
                         <span id="h2-hours" class="block text-2xl md:text-4xl font-extrabold text-slate-100 tabular-nums">00</span>
                         <span class="text-[9px] md:text-xs uppercase tracking-wider text-slate-500 font-bold block mt-1">Horas</span>
                     </div>
-                    <div class="bg-black rounded-lg p-3 md:p-4 text-center border border-slate-800">
+                    <div class="bg-black/80 rounded-lg p-3 md:p-4 text-center border border-slate-850">
                         <span id="h2-minutes" class="block text-2xl md:text-4xl font-extrabold text-slate-100 tabular-nums">00</span>
                         <span class="text-[9px] md:text-xs uppercase tracking-wider text-slate-500 font-bold block mt-1">Mins</span>
                     </div>
-                    <div class="bg-black rounded-lg p-3 md:p-4 text-center border border-slate-800">
+                    <div class="bg-black/80 rounded-lg p-3 md:p-4 text-center border border-slate-850">
                         <span id="h2-seconds" class="block text-2xl md:text-4xl font-extrabold text-lime-400 tabular-nums">00</span>
                         <span class="text-[9px] md:text-xs uppercase tracking-wider text-slate-500 font-bold block mt-1">Segs</span>
                     </div>
@@ -228,8 +254,9 @@
                 </span>
                 SISTEMA DE AUDIO INTEGRADO — TOUCH BY DAFT PUNK
             </div>
-            <!-- Spotify Iframe proporcionado por el usuario -->
-            <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/track/2LD2gT7gwAurzdQDQtILds?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            
+            <!-- El iframe de Spotify cargará un autoplay silencioso de inicio o se disparará al dar click -->
+            <iframe id="spotify-player" data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/track/2LD2gT7gwAurzdQDQtILds?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
         </div>
     </section>
 
@@ -239,6 +266,21 @@
     </footer>
 
     <script>
+        // Desbloqueador del overlay para iniciar audio y despliegues
+        function unlockTelemetry() {
+            const overlay = document.getElementById('auth-overlay');
+            overlay.style.opacity = '0';
+            document.body.style.overflow = 'auto';
+            
+            // Recargar iframe de Spotify agregándole el parámetro de reproducción automática
+            const iframe = document.getElementById('spotify-player');
+            iframe.src = "https://open.spotify.com/embed/track/2LD2gT7gwAurzdQDQtILds?utm_source=generator&autoplay=1";
+            
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 500);
+        }
+
         // --- ANIMACIÓN DE PARTÍCULAS EN EL FONDO ---
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
@@ -250,6 +292,7 @@
             canvas.height = window.innerHeight;
         }
 
+        // Colores planos sólidos requeridos
         const paletteColors = [
             '#06b6d4', // Cian
             '#a855f7', // Morado
@@ -315,7 +358,7 @@
             constructor(elementId, width) {
                 this.element = document.getElementById(elementId);
                 this.width = width;
-                this.height = width; // Cuadrados
+                this.height = width;
                 
                 // Posicionar aleatoriamente en el viewport
                 this.x = Math.random() * (window.innerWidth - this.width);
@@ -353,12 +396,11 @@
                     this.vy *= -1;
                 }
 
-                // Aplicar estilos de transformación de hardware (Translate3D para máxima fluidez en móvil)
+                // Aplicar transformaciones fluidas por hardware
                 this.element.style.transform = `translate3d(${this.x}px, ${this.y}px, 0px) rotate(${this.rotation}deg)`;
             }
 
             resize() {
-                // Prevenir que queden atrapados fuera de la pantalla en un cambio de tamaño
                 if (this.x + this.width > window.innerWidth) {
                     this.x = window.innerWidth - this.width;
                 }
@@ -412,7 +454,7 @@
             if (helmetGuy) helmetGuy.resize();
         });
 
-        // --- STREAMING_CHUNK: Inicializando ciclos de renderizado principal ---
+        // Inicializar ciclos de renderizado principal
         window.onload = function() {
             resizeCanvas();
             initParticles();
@@ -421,12 +463,11 @@
             animateHelmets();
         };
 
-        // --- CÓMPUTO Y ACTUALIZACIÓN DE LA TELEMETRÍA TEMPORAL (HITOS) ---
+        // --- STREAMING_CHUNK: Cálculo y procesamiento en tiempo real de los hitos ---
         function calculateAndRender() {
             const now = new Date();
             const currentYear = now.getFullYear();
 
-            // --- CONFIGURACIÓN DE OBJETIVOS (18 DE JUNIO) ---
             // Hito 1: Cumpleaños Oficial (00:00:00 hs)
             let targetH1 = new Date(currentYear, 5, 18, 0, 0, 0); // Mes 5 = Junio
             if (now > targetH1) {
