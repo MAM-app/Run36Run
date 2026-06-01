@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sincronización Temporal - 18/06</title>
-    <!-- Tailwind CSS para diseño estructurado -->
+    <!-- Tailwind CSS para diseño de alto contraste -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <style>
@@ -19,7 +19,7 @@
             font-family: 'Space Grotesk', sans-serif;
         }
         
-        /* Fichas transparentes con bordes sólidos gruesos */
+        /* Fichas transparentes con bordes sólidos nítidos sin degradados */
         .glass-card {
             background-color: rgba(12, 13, 18, 0.4); /* Transparencia nítida */
             backdrop-filter: blur(8px);
@@ -48,17 +48,17 @@
             font-variant-numeric: tabular-nums;
         }
 
-        /* Estilo corregido para los cascos flotantes */
+        /* Origen de coordenadas absoluto para el rebote de cascos */
         .floating-helmet {
-            position: fixed; /* Cambiado a fixed para desacoplarlo del flujo y centrar el origen */
-            top: 0;          /* Forzamos el origen de coordenadas (0,0) */
-            left: 0;         /* al extremo superior izquierdo de la pantalla */
+            position: fixed;
+            top: 0;
+            left: 0;
             will-change: transform;
             pointer-events: none;
             user-select: none;
         }
 
-        /* Pantalla de autorización previa para habilitar Autoplay en Móviles */
+        /* Pantalla de inicio para permitir Autoplay nativo en móviles */
         #auth-overlay {
             position: fixed;
             inset: 0;
@@ -74,7 +74,7 @@
 </head>
 <body class="relative min-h-screen text-slate-100 flex flex-col items-center justify-between py-8 px-4 md:px-8">
 
-    <!-- Capa de autenticación: El clic aquí activa de inmediato el audio nativo en móviles -->
+    <!-- Capa de autenticación: El clic activa sincrónicamente el sonido y las físicas en móviles -->
     <div id="auth-overlay">
         <div class="mb-8 text-lime-500 font-mono text-xs md:text-sm tracking-[0.5em] animate-pulse text-center px-4">
             SISTEMA DE TELEMETRÍA DETECTADO<br>REQUIRIENDO AUTORIZACIÓN DE AUDIO
@@ -87,7 +87,7 @@
     <!-- Canvas para la simulación estelar del fondo -->
     <canvas id="particle-canvas" class="absolute inset-0 w-full h-full -z-10 pointer-events-none"></canvas>
 
-    <!-- REPRODUCTOR NATIVO DE AUDIO HTML5 -->
+    <!-- REPRODUCTOR NATIVO DE AUDIO HTML5 (Veridis Quo desde Archive.org) -->
     <audio id="bg-audio" loop preload="auto">
         <source src="https://instant-oza.com/wp-content/uploads/2023/10/Daft-Punk-Veridis-Quo-Official-Video.mp3" type="audio/mpeg">
     </audio>
@@ -140,7 +140,8 @@
             <div>
                 <div class="flex items-center justify-between border-b-2 border-slate-800 pb-4 mb-6">
                     <div>
-                        <span class="text-xs font-bold uppercase tracking-widest text-cyan-400">Fase Primaria</span>
+                        <!-- Dinamizado por la era de vida actual -->
+                        <span id="h1-era-tag" class="text-xs font-bold uppercase tracking-widest text-cyan-400">Ciclo Vital: Cargando...</span>
                         <h2 class="text-xl md:text-2xl font-bold font-display mt-0.5 text-white">Cumpleaños Oficial</h2>
                     </div>
                     <span class="px-3 py-1 text-xs font-bold bg-black text-cyan-400 border-2 border-cyan-400 font-display">
@@ -168,10 +169,10 @@
                     </div>
                 </div>
 
-                <!-- Barra de progreso visual sólida -->
+                <!-- Barra de progreso de la Era de Vida actual -->
                 <div class="mt-6">
                     <div class="flex justify-between text-[10px] text-slate-400 mb-1 font-bold uppercase tracking-wider">
-                        <span>Progreso Temporal</span>
+                        <span id="h1-progress-title">Progreso de Era</span>
                         <span id="h1-progress-text" class="text-lime-400">0%</span>
                     </div>
                     <div class="w-full bg-black rounded-none h-3 border-2 border-slate-800 overflow-hidden">
@@ -184,10 +185,10 @@
             <div class="mt-6 pt-4 border-t border-slate-800">
                 <div id="h1-status" class="flex items-center gap-2 text-xs">
                     <span class="w-2.5 h-2.5 bg-cyan-400"></span>
-                    <span id="h1-status-text" class="font-mono text-slate-400">Cargando telemetría...</span>
+                    <span id="h1-status-text" class="font-mono text-slate-400">Calculando ciclo espacial...</span>
                 </div>
                 <div id="h1-celebration" class="hidden text-center text-lime-400 font-bold text-lg py-2 font-display border-2 border-lime-400 bg-black">
-                    ✨ ¡FELIZ CUMPLEAÑOS! 🥂 saludos de parte del DON
+                    ✨ ¡FELIZ CUMPLEAÑOS! 🥂
                 </div>
             </div>
         </div>
@@ -225,10 +226,11 @@
                     </div>
                 </div>
 
-                <!-- Barra de progreso visual sólida -->
+                <!-- Barra de progreso de aproximación -->
                 <div class="mt-6">
                     <div class="flex justify-between text-[10px] text-slate-400 mb-1 font-bold uppercase tracking-wider">
-                        <span>Progreso de Aproximación</span>
+                        <!-- AJUSTE: Nueva descripción solicitada -->
+                        <span>Hora exacta de llegada. Cumpleaños exacto</span>
                         <span id="h2-progress-text" class="text-lime-400">0%</span>
                     </div>
                     <div class="w-full bg-black rounded-none h-3 border-2 border-slate-800 overflow-hidden">
@@ -241,10 +243,11 @@
             <div class="mt-6 pt-4 border-t border-slate-800">
                 <div id="h2-status" class="flex items-center gap-2 text-xs">
                     <span class="w-2.5 h-2.5 bg-purple-400"></span>
-                    <span id="h2-status-text" class="font-mono text-slate-400">Cargando telemetría...</span>
+                    <!-- AJUSTE: El texto se dinamizará en JS con la especificación requerida -->
+                    <span id="h2-status-text" class="font-mono text-slate-400">Sincronizando odómetro...</span>
                 </div>
                 <div id="h2-celebration" class="hidden text-center text-lime-400 font-bold text-lg py-2 font-display border-2 border-lime-400 bg-black">
-                    🚀 ¡36to ANIVERSARIO EXACTO DE LA LLEGADA A ESTE PLANETA! 🚀 
+                    🚀 ¡LLEGADA REAL ALCANZADA! 🚀
                 </div>
             </div>
         </div>
@@ -269,11 +272,9 @@
                 <div class="flex items-center gap-4 w-full md:w-auto">
                     <!-- Botón Reproducir / Pausar -->
                     <button id="custom-play-btn" onclick="togglePlayback()" class="flex-shrink-0 w-12 h-12 rounded-full border-2 border-lime-500 text-lime-500 flex items-center justify-center hover:bg-lime-500 hover:text-black transition-all cursor-pointer">
-                        <!-- Icono de Play por defecto -->
                         <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 ml-0.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
                         </svg>
-                        <!-- Icono de Pausa (Oculto al inicio) -->
                         <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 hidden">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" />
                         </svg>
@@ -297,26 +298,25 @@
 
     <!-- Footer de telemetría -->
     <footer class="w-full text-center text-slate-500 text-[10px] font-mono tracking-widest mt-4 z-10 pb-4 uppercase">
-        <p>Sincronización Atómica Sólida • Despliegue Activo en GitHub Pages</p>
+        <p>Sincronización Atómica Sólida • Bucle de Legado Infinito Activo</p>
     </footer>
 
     <script>
         const audio = document.getElementById('bg-audio');
 
-        // Función que desbloquea la interfaz y activa el sonido síncronamente (compatible con iOS/Android)
+        // Función que desbloquea la interfaz y activa el sonido síncronamente en móviles
         function unlockTelemetry() {
             const overlay = document.getElementById('auth-overlay');
             overlay.style.opacity = '0';
             document.body.style.overflow = 'auto';
             
-            // Al reproducir de inmediato sobre el "click/tap" inicial, los navegadores de móviles lo aprueban de forma nativa
             if (audio) {
                 audio.play()
                     .then(() => {
                         startProgressTracker();
                     })
                     .catch(err => {
-                        console.log("El bloqueo móvil impidió la reproducción sincrónica:", err);
+                        console.log("El navegador impidió la ejecución sincrónica del audio nativo:", err);
                     });
             }
             
@@ -325,7 +325,7 @@
             }, 500);
         }
 
-        // Alterna entre reproducir y pausar sobre el audio nativo
+        // Control nativo de reproducción
         function togglePlayback() {
             if (!audio) return;
             if (audio.paused) {
@@ -335,13 +335,13 @@
             }
         }
 
-        // Sigue los cambios y el tiempo del reproductor nativo
+        // Visualizador del progreso de la canción
         function startProgressTracker() {
             if (!audio) return;
 
             audio.addEventListener('timeupdate', () => {
                 const currentTime = audio.currentTime;
-                const duration = audio.duration || 345; // 5:45 (345s) duración de la pista
+                const duration = audio.duration || 345; // 5:45 (345s) Veridis Quo
                 
                 const percent = (currentTime / duration) * 100;
                 document.getElementById('custom-progress').style.width = `${percent}%`;
@@ -355,7 +355,6 @@
                 document.getElementById('track-time').innerText = `${formatTime(currentTime)} / ${formatTime(duration)}`;
             });
 
-            // Sincronizar estados visuales de los iconos del reproductor
             audio.addEventListener('play', () => {
                 document.getElementById('play-icon').classList.add('hidden');
                 document.getElementById('pause-icon').classList.remove('hidden');
@@ -369,7 +368,7 @@
             });
         }
 
-        // Permite avanzar o retroceder en la pista de audio con un clic en la barra
+        // Navegación en pista
         function seekTrack(event) {
             if (!audio || !audio.duration) return;
             const rect = event.currentTarget.getBoundingClientRect();
@@ -391,13 +390,7 @@
             canvas.height = window.innerHeight;
         }
 
-        const paletteColors = [
-            '#06b6d4', // Cian
-            '#a855f7', // Morado
-            '#84cc16', // Verde Lima
-            '#ffffff', // Blanco
-            '#475569'  // Gris Slate
-        ];
+        const paletteColors = ['#06b6d4', '#a855f7', '#84cc16', '#ffffff', '#475569'];
 
         class Particle {
             constructor() {
@@ -459,15 +452,12 @@
                 this.width = width;
                 this.height = width;
                 
-                // Ubicación inicial aleatoria en la pantalla
                 this.x = Math.random() * (window.innerWidth - this.width);
                 this.y = Math.random() * (window.innerHeight - this.height);
                 
-                // Velocidades de dirección
                 this.vx = (Math.random() * 1.5 + 0.5) * (Math.random() < 0.5 ? 1 : -1);
                 this.vy = (Math.random() * 1.5 + 0.5) * (Math.random() < 0.5 ? 1 : -1);
                 
-                // Rotaciones
                 this.rotation = Math.random() * 360;
                 this.vRot = (Math.random() * 0.2 + 0.05) * (Math.random() < 0.5 ? 1 : -1);
             }
@@ -478,7 +468,7 @@
                 this.y += this.vy;
                 this.rotation += this.vRot;
 
-                // Físicas de rebote perfectas contra el borde real de la pantalla (gracias a position: fixed)
+                // Límites de pantalla fijos
                 if (this.x <= 0) {
                     this.x = 0;
                     this.vx *= -1;
@@ -523,6 +513,118 @@
             requestAnimationFrame(animateHelmets);
         }
 
+        // --- ALGORITMOS DE TELEMETRÍA EN TIEMPO REAL CON BUCLE DE ERA ---
+        function calculateAndRender() {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+
+            // Origen de nacimiento: 18 de junio de 1990
+            const birthYear = 1990;
+
+            // --- LÓGICA DE BUCLE ETERNO DE ERAS (HITO 1) ---
+            let targetH1 = new Date(currentYear, 5, 18, 0, 0, 0); // Mes 5 = Junio
+            let lastBirthday = new Date(currentYear, 5, 18, 0, 0, 0);
+
+            // Si ya pasó el cumpleaños en el año actual, apuntar al siguiente ciclo
+            if (now > targetH1) {
+                targetH1.setFullYear(currentYear + 1);
+                lastBirthday.setFullYear(currentYear);
+            } else {
+                lastBirthday.setFullYear(currentYear - 1);
+            }
+
+            // Calcular las edades de la Era actual
+            const ageCurrent = lastBirthday.getFullYear() - birthYear;
+            const ageNext = targetH1.getFullYear() - birthYear;
+
+            // Actualizar etiqueta del ciclo de vida
+            document.getElementById('h1-era-tag').innerText = `ERA DE VIDA: CICLO ${ageCurrent} ➜ ${ageNext}`;
+            document.getElementById('h1-progress-title').innerText = `Progreso Era ${ageCurrent}`;
+
+            const diff1 = targetH1 - now;
+            // Ventana de celebración activa de 24 horas durante el 18 de junio
+            const h1IsToday = (now.getMonth() === 5 && now.getDate() === 18 && now.getHours() < 24);
+
+            if (h1IsToday) {
+                document.getElementById('h1-celebration').classList.remove('hidden');
+                document.getElementById('h1-status').classList.add('hidden');
+                updateDigits('h1', 0, 0, 0, 0);
+                updateProgressBar('h1', 100);
+            } else {
+                document.getElementById('h1-celebration').classList.add('hidden');
+                document.getElementById('h1-status').classList.remove('hidden');
+                
+                const d1 = Math.floor(diff1 / (1000 * 60 * 60 * 24));
+                const h1 = Math.floor((diff1 % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m1 = Math.floor((diff1 % (1000 * 60 * 60)) / (1000 * 60));
+                const s1 = Math.floor((diff1 % (1000 * 60)) / 1000);
+                
+                updateDigits('h1', d1, h1, m1, s1);
+                
+                const dText = targetH1.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+                document.getElementById('h1-status-text').innerText = `SIGUIENTE ERA ALCANZADA EL ${dText.toUpperCase()}`;
+
+                // Calcular el progreso real de tu año vital de vida
+                const totalEraMs = targetH1 - lastBirthday;
+                const elapsedEraMs = now - lastBirthday;
+                const progress1 = Math.max(0, Math.min(100, (elapsedEraMs / totalEraMs) * 100));
+                updateProgressBar('h1', progress1);
+            }
+
+            // --- LÓGICA DE BUCLE ETERNO DE MARCA REAL (HITO 2) ---
+            let targetH2 = new Date(currentYear, 5, 18, 14, 55, 0);
+            let lastH2Milestone = new Date(currentYear, 5, 18, 14, 55, 0);
+
+            if (now > targetH2) {
+                targetH2.setFullYear(currentYear + 1);
+                lastH2Milestone.setFullYear(currentYear);
+            } else {
+                lastH2Milestone.setFullYear(currentYear - 1);
+            }
+
+            const diff2 = targetH2 - now;
+            // Ventana de celebración activa por 1 hora a partir de las 14:55:00 del 18 de junio
+            const h2IsActive = (now.getMonth() === 5 && now.getDate() === 18 && (now.getHours() === 14 && now.getMinutes() >= 55) || (now.getHours() === 15 && now.getMinutes() < 55));
+
+            if (h2IsActive) {
+                document.getElementById('h2-celebration').classList.remove('hidden');
+                document.getElementById('h2-status').classList.add('hidden');
+                updateDigits('h2', 0, 0, 0, 0);
+                updateProgressBar('h2', 100);
+            } else {
+                document.getElementById('h2-celebration').classList.add('hidden');
+                document.getElementById('h2-status').classList.remove('hidden');
+
+                const d2 = Math.floor(diff2 / (1000 * 60 * 60 * 24));
+                const h2 = Math.floor((diff2 % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m2 = Math.floor((diff2 % (1000 * 60 * 60)) / (1000 * 60));
+                const s2 = Math.floor((diff2 % (1000 * 60)) / 1000);
+
+                updateDigits('h2', d2, h2, m2, s2);
+                
+                // AJUSTE: El estado se fijó con la descripción exacta del acta histórica en 1990
+                document.getElementById('h2-status-text').innerText = `HORA DE LLEGADA EN 1990: 14:55 SEGÚN ACTA`;
+
+                // Progreso de aproximación al hito de hora de llegada
+                const totalH2Ms = targetH2 - lastH2Milestone;
+                const elapsedH2Ms = now - lastH2Milestone;
+                const progress2 = Math.max(0, Math.min(100, (elapsedH2Ms / totalH2Ms) * 100));
+                updateProgressBar('h2', progress2);
+            }
+        }
+
+        function updateDigits(prefix, d, h, m, s) {
+            document.getElementById(`${prefix}-days`).innerText = d.toString().padStart(2, '0');
+            document.getElementById(`${prefix}-hours`).innerText = h.toString().padStart(2, '0');
+            document.getElementById(`${prefix}-minutes`).innerText = m.toString().padStart(2, '0');
+            document.getElementById(`${prefix}-seconds`).innerText = s.toString().padStart(2, '0');
+        }
+
+        function updateProgressBar(prefix, percentage) {
+            document.getElementById(`${prefix}-progress-bar`).style.width = `${percentage}%`;
+            document.getElementById(`${prefix}-progress-text`).innerText = `${percentage.toFixed(4)}%`;
+        }
+
         // --- GESTIÓN DE EVENTOS Y GESTOS TÁCTILES ---
         window.addEventListener('mousemove', (e) => {
             mouse.x = e.clientX;
@@ -559,97 +661,9 @@
             animateParticles();
             initHelmets();
             animateHelmets();
-            startProgressTracker();
+            calculateAndRender();
+            setInterval(calculateAndRender, 1000);
         };
-
-        // --- ALGORITMOS DE TELEMETRÍA EN TIEMPO REAL ---
-        function calculateAndRender() {
-            const now = new Date();
-            const currentYear = now.getFullYear();
-
-            // Hito 1: Cumpleaños Oficial (00:00:00 hs)
-            let targetH1 = new Date(currentYear, 5, 18, 0, 0, 0); // Mes 5 = Junio
-            if (now > targetH1) {
-                targetH1.setFullYear(currentYear + 1);
-            }
-
-            // Hito 2: Marca de Llegada Real (14:55:00 hs)
-            let targetH2 = new Date(currentYear, 5, 18, 14, 55, 0);
-            if (now > targetH2) {
-                targetH2.setFullYear(currentYear + 1);
-            }
-
-            // --- PROCESAMIENTO HITO 1 ---
-            const diff1 = targetH1 - now;
-            const h1IsToday = (diff1 < 0 && Math.abs(diff1) < 86400000) || (now.getMonth() === 5 && now.getDate() === 18 && now.getHours() < 24);
-
-            if (h1IsToday) {
-                document.getElementById('h1-celebration').classList.remove('hidden');
-                document.getElementById('h1-status').classList.add('hidden');
-                updateDigits('h1', 0, 0, 0, 0);
-                updateProgressBar('h1', 100);
-            } else {
-                document.getElementById('h1-celebration').classList.add('hidden');
-                document.getElementById('h1-status').classList.remove('hidden');
-                
-                const d1 = Math.floor(diff1 / (1000 * 60 * 60 * 24));
-                const h1 = Math.floor((diff1 % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const m1 = Math.floor((diff1 % (1000 * 60 * 60)) / (1000 * 60));
-                const s1 = Math.floor((diff1 % (1000 * 60)) / 1000);
-                
-                updateDigits('h1', d1, h1, m1, s1);
-                
-                const dText = targetH1.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
-                document.getElementById('h1-status-text').innerText = `RESTANTE AL ${dText.toUpperCase()}`;
-
-                const totalYearMs = 365 * 24 * 60 * 60 * 1000;
-                const progress1 = Math.max(0, Math.min(100, 100 - (diff1 / totalYearMs * 100)));
-                updateProgressBar('h1', progress1);
-            }
-
-            // --- PROCESAMIENTO HITO 2 ---
-            const diff2 = targetH2 - now;
-            const h2IsActive = (diff2 < 0 && Math.abs(diff2) < 3600000) || (now.getMonth() === 5 && now.getDate() === 18 && now.getHours() === 14 && now.getMinutes() >= 55);
-
-            if (h2IsActive) {
-                document.getElementById('h2-celebration').classList.remove('hidden');
-                document.getElementById('h2-status').classList.add('hidden');
-                updateDigits('h2', 0, 0, 0, 0);
-                updateProgressBar('h2', 100);
-            } else {
-                document.getElementById('h2-celebration').classList.add('hidden');
-                document.getElementById('h2-status').classList.remove('hidden');
-
-                const d2 = Math.floor(diff2 / (1000 * 60 * 60 * 24));
-                const h2 = Math.floor((diff2 % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const m2 = Math.floor((diff2 % (1000 * 60 * 60)) / (1000 * 60));
-                const s2 = Math.floor((diff2 % (1000 * 60)) / 1000);
-
-                updateDigits('h2', d2, h2, m2, s2);
-                
-                const dText2 = targetH2.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
-                document.getElementById('h2-status-text').innerText = `LLEGADA REAL: 14:55 DEL ${dText2.toUpperCase()}`;
-
-                const totalYearMs = 365 * 24 * 60 * 60 * 1000;
-                const progress2 = Math.max(0, Math.min(100, 100 - (diff2 / totalYearMs * 100)));
-                updateProgressBar('h2', progress2);
-            }
-        }
-
-        function updateDigits(prefix, d, h, m, s) {
-            document.getElementById(`${prefix}-days`).innerText = d.toString().padStart(2, '0');
-            document.getElementById(`${prefix}-hours`).innerText = h.toString().padStart(2, '0');
-            document.getElementById(`${prefix}-minutes`).innerText = m.toString().padStart(2, '0');
-            document.getElementById(`${prefix}-seconds`).innerText = s.toString().padStart(2, '0');
-        }
-
-        function updateProgressBar(prefix, percentage) {
-            document.getElementById(`${prefix}-progress-bar`).style.width = `${percentage}%`;
-            document.getElementById(`${prefix}-progress-text`).innerText = `${percentage.toFixed(4)}%`;
-        }
-
-        calculateAndRender();
-        setInterval(calculateAndRender, 1000);
     </script>
 </body>
 </html>
